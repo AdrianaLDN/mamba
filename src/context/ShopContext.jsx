@@ -4,16 +4,16 @@ import { ItemsList } from '../Items/itemsList';
 
 export const ShopContext = createContext(null);
 
-const getDefaultCart = () => {
-    let cart = {}
-    for (let i = 1; i < ItemsList.length + 1; i++) {
-        cart[i] = 0;
-    }
-    return cart;
-}
+// const getDefaultCart = () => {
+//     let cart = {}
+//     for (let i = 1; i < ItemsList.length + 1; i++) {
+//         cart[i] = 0;
+//     }
+//     return cart;
+// }
 
 export const ShopContextProv = (props) => {
-    const [cartItems, setCartItems] = useState(getDefaultCart());
+    const [cartItems, setCartItems] = useState([]);
 
     const getTotalAmount = () => {
         let totalAmount = 0;
@@ -42,8 +42,23 @@ export const ShopContextProv = (props) => {
     // }
 
 
-    const addToCart = (itemId) => {
-        setCartItems((prev) => ({...prev, [itemId]: prev[itemId] + 1 }))
+    const addToCart = (itemId, itemPrice ) => {
+        const existingItem = cartItems.find((item) => item.id === itemId);
+
+        if (existingItem) {
+            // Item already exists, update quantity
+            setCartItems(
+            cartItems.map((item) =>
+                item.id === itemId ? { ...item, quantity: item.quantity + 1 } : item
+            )
+            );
+        } else {
+            // Item doesn't exist, add it to the array
+            setCartItems([
+            ...cartItems,
+            { id: itemId, price: itemPrice, quantity: 1 }
+            ]);
+        }
     };
 
     const removeFromCart = (itemId) => {
